@@ -5,7 +5,7 @@ import { theme } from "../../models/styles/styles";
 import { AddTaskForm } from "./addTaskForm";
 
 export const AddTaskBottomSheet = ({bottomSheetRef}: {bottomSheetRef: React.MutableRefObject<any>}) => {
-    const snapPoints = useMemo(() => ['100%', '75%'], []);
+    const snapPoints = useMemo(() => ['90%', '75%'], []);
 
     const handleCloseAddTaskBottomSheet = () => bottomSheetRef.current?.close();
 
