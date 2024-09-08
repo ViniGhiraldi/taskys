@@ -1,12 +1,17 @@
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native"
 import { Title } from "../title"
-import { Ionicons } from "@expo/vector-icons"
+import { MaterialIcons } from "@expo/vector-icons"
 import { Divider } from "../divider"
 import { Paragraph } from "../paragraph"
 import { theme } from "../../models/styles/styles"
 import { useState } from "react"
 import DatePicker from "@react-native-community/datetimepicker";
 import { useForm, Controller } from "react-hook-form"
+import AsyncStorage from "@react-native-async-storage/async-storage"
+import { useTasksContext } from "../../contexts/tasksContext"
+import { IAllTasks } from "../../models/interfaces/IAllTasks"
+import { compareDesc } from "date-fns"
+import { ITask } from "../../models/interfaces/ITask"
 
 interface IAddTaskForm{
     handleCloseAddTaskBottomSheet: () => void;
@@ -18,6 +23,7 @@ type TAddTaskForm = {
 }
 
 export const AddTaskForm = ({handleCloseAddTaskBottomSheet}: IAddTaskForm) => {
+    const { handleChangeTasks } = useTasksContext();
     const { control, handleSubmit, formState: { errors } } = useForm<TAddTaskForm>();
 
     const [date, setDate] = useState<Date>();
@@ -30,10 +36,47 @@ export const AddTaskForm = ({handleCloseAddTaskBottomSheet}: IAddTaskForm) => {
         setShowDatePicker(false);
     }
 
-    const handleAddTask = (values: TAddTaskForm) => {
+    const handleAddTask = async (values: TAddTaskForm) => {
         if(!date){
             setErrorDateMessage('Selecione uma data');
             return;
+        }
+        
+        try {
+            //instanciando constante com os valores da nova tarefa
+            const task = {...values, conclusionDate: date};
+
+            //pegando as tarefas salvas no Async Storage
+            const currentTasks = await AsyncStorage.getItem('tasks');
+
+            //verificando se existe alguma tarefa salva no Async Storage
+            if(currentTasks){
+                //convertendo tarefas salvas no Async Storage para JSON
+                const currentTasksParsed = JSON.parse(currentTasks) as IAllTasks;
+
+                //verificando se existem tarefas pendentes salvas
+                if(currentTasksParsed.pendings){
+                    //ordenando tarefas pendentes por ordem de data de conclusão mais próxima
+                    const pendingTasksInOrder = [task, ...currentTasksParsed.pendings].sort((a, b) => {
+                        return new Date(a.conclusionDate) > new Date(b.conclusionDate) ? 1 : new Date(a.conclusionDate) < new Date(b.conclusionDate) ? -1 : 0;
+                    })
+                    const newTasks = {...currentTasksParsed, pendings: pendingTasksInOrder};
+
+                    //atualizando as tarefas salvas no Async Storage e no estado local
+                    await AsyncStorage.setItem('tasks', JSON.stringify(newTasks));
+                    handleChangeTasks(newTasks);
+                }else{
+                }
+            }else{
+                //adicionando nova tarefa como primeira tarefa pendente no Async Storage e no estado local
+                await AsyncStorage.setItem('tasks', JSON.stringify({pendings: [task]}));
+                handleChangeTasks({pendings: [task]});
+            }
+
+            //fechando bottom sheet
+            handleCloseAddTaskBottomSheet();
+        } catch (error) {
+            console.log(error);
         }
     }
 
@@ -42,7 +85,7 @@ export const AddTaskForm = ({handleCloseAddTaskBottomSheet}: IAddTaskForm) => {
             <View style={styles.header}>
                 <Title>Adicionar tarefa</Title>
                 <TouchableOpacity onPress={handleCloseAddTaskBottomSheet}>
-                    <Ionicons name="close" size={20} />
+                    <MaterialIcons name="close" size={20} />
                 </TouchableOpacity>
             </View>
             <Divider.default />
@@ -77,7 +120,7 @@ export const AddTaskForm = ({handleCloseAddTaskBottomSheet}: IAddTaskForm) => {
             <View style={styles.field}>
                 <Paragraph.regular>Data de conclusão</Paragraph.regular>
                 <TouchableOpacity style={{...styles.datePicker, borderWidth: errorDateMessage ? 1 : 0}} onPress={() => setShowDatePicker(true)}>
-                    <Ionicons name="calendar-outline" size={theme.fontSize.large} />
+                    <MaterialIcons name="calendar-today" size={theme.fontSize.large} />
                     {date ? <Paragraph.regular>{date.toISOString()}</Paragraph.regular> : <Text style={styles.textMuted}>Selecione uma data</Text>}
                 </TouchableOpacity>
                 {errorDateMessage && <Paragraph.danger>{errorDateMessage}</Paragraph.danger>}
@@ -93,7 +136,7 @@ export const AddTaskForm = ({handleCloseAddTaskBottomSheet}: IAddTaskForm) => {
             </View>
             <Divider.default />
             <TouchableOpacity style={styles.addButton} onPress={handleSubmit(handleAddTask)}>
-                <Ionicons name="add" size={20} />
+                <MaterialIcons name="add" size={20} />
                 <Paragraph.bold>Adicionar</Paragraph.bold>
             </TouchableOpacity>
         </View>
@@ -147,6 +190,7 @@ const styles = StyleSheet.create({
         backgroundColor: theme.colors.background,
         borderRadius: theme.radius.rounded,
         padding: theme.distance.normal,
-        justifyContent: 'center'
+        justifyContent: 'center',
+        alignItems: 'center'
     }
 })

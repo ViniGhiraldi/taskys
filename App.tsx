@@ -4,6 +4,7 @@ import { Home } from './src/screens/home';
 import { useFonts, Oxanium_400Regular, Oxanium_700Bold } from '@expo-google-fonts/oxanium';
 import AppLoading from 'expo-app-loading';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { TasksProvider } from './src/contexts/tasksContext';
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -17,8 +18,10 @@ export default function App() {
 
   return (
     <GestureHandlerRootView>
-      <Home/>
-      <StatusBar style="auto" />
+      <TasksProvider>
+        <Home/>
+        <StatusBar style="auto" />
+      </TasksProvider>
     </GestureHandlerRootView>
   );
 }
