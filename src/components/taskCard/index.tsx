@@ -11,16 +11,8 @@ import Animated, { runOnUI, useAnimatedStyle, withTiming } from "react-native-re
 import { useState } from "react"
 
 export const TaskCard = ({ conclusionDate, description, title }: ITask) => {
-    const { animatedHeightStyle, animatedRef, isOpened, setHeight } = useAccordion();
-    const animatedChevronStyle = useAnimatedStyle(() => ({
-        transform: [
-            {
-                rotate: withTiming(`${isOpened.value ? 180 : 0}deg`, {
-                    duration: 200
-                })
-            }
-        ]
-    }))
+    const { animatedHeightStyle, animatedRef, isOpened, setHeight, animatedChevronStyle } = useAccordion();
+    
 
     const [showMoreLines, setShowMoreLines] = useState(isOpened.value);
 
@@ -46,7 +38,7 @@ export const TaskCard = ({ conclusionDate, description, title }: ITask) => {
             <Animated.View style={[animatedHeightStyle]}>
                 <View style={styles.content} ref={animatedRef} collapsable={false}>
                     <Divider.default/>
-                    <SmallText>{description}</SmallText>
+                    <SmallText.muted>{description}</SmallText.muted>
                 </View>
             </Animated.View>
         </View>

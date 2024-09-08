@@ -8,6 +8,15 @@ export const useAccordion = () => {
     const animatedHeightStyle = useAnimatedStyle(() => ({
         height: withTiming(height.value)
     }))
+    const animatedChevronStyle = useAnimatedStyle(() => ({
+        transform: [
+            {
+                rotate: withTiming(`${isOpened.value ? 180 : 0}deg`, {
+                    duration: 200
+                })
+            }
+        ]
+    }))
 
     const setHeight = () => {
         'worklet'
@@ -20,6 +29,7 @@ export const useAccordion = () => {
         animatedRef,
         setHeight,
         isOpened,
-        animatedHeightStyle
+        animatedHeightStyle,
+        animatedChevronStyle
     }
 }

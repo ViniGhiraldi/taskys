@@ -1,4 +1,4 @@
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native"
+import { Pressable, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native"
 import { Title } from "../title"
 import { MaterialIcons } from "@expo/vector-icons"
 import { Divider } from "../divider"
@@ -10,8 +10,9 @@ import { useForm, Controller } from "react-hook-form"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { useTasksContext } from "../../contexts/tasksContext"
 import { IAllTasks } from "../../models/interfaces/IAllTasks"
-import { compareDesc } from "date-fns"
-import { ITask } from "../../models/interfaces/ITask"
+import { Button } from "../button"
+import { DatePickerView } from "../datePickerView"
+import { SmallText } from "../smallText"
 
 interface IAddTaskForm{
     handleCloseAddTaskBottomSheet: () => void;
@@ -30,7 +31,7 @@ export const AddTaskForm = ({handleCloseAddTaskBottomSheet}: IAddTaskForm) => {
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [errorDateMessage, setErrorDateMessage] = useState<string>();
 
-    const handleDateSelected = (e: any, selectedDate?: Date) => {
+    const handleDateSelected = (_: any, selectedDate?: Date) => {
         setDate(selectedDate);
         setErrorDateMessage(undefined);
         setShowDatePicker(false);
@@ -84,9 +85,9 @@ export const AddTaskForm = ({handleCloseAddTaskBottomSheet}: IAddTaskForm) => {
         <View style={styles.container}>
             <View style={styles.header}>
                 <Title>Adicionar tarefa</Title>
-                <TouchableOpacity onPress={handleCloseAddTaskBottomSheet}>
+                <Pressable onPress={handleCloseAddTaskBottomSheet}>
                     <MaterialIcons name="close" size={20} />
-                </TouchableOpacity>
+                </Pressable>
             </View>
             <Divider.default />
             <View style={styles.field}>
@@ -101,7 +102,7 @@ export const AddTaskForm = ({handleCloseAddTaskBottomSheet}: IAddTaskForm) => {
                         <TextInput style={{...styles.input, borderWidth: errors.title ? 1 : 0}} value={value} onChangeText={onChange} placeholderTextColor={theme.colors.muted} placeholder="Sobre o que se trata"/>
                     )}
                 />
-                {errors.title && <Paragraph.danger>{errors.title.message}</Paragraph.danger>}
+                {errors.title && <SmallText.danger>{errors.title.message}</SmallText.danger>}
             </View>
             <View style={styles.field}>
                 <Paragraph.regular>Descrição</Paragraph.regular>
@@ -115,15 +116,12 @@ export const AddTaskForm = ({handleCloseAddTaskBottomSheet}: IAddTaskForm) => {
                         <TextInput style={{...styles.input, borderWidth: errors.description ? 1 : 0}} value={value} onChangeText={onChange} multiline numberOfLines={4} placeholderTextColor={theme.colors.muted} placeholder="Descreva brevemente a tarefa"/>        
                     )}
                 />
-                {errors.description && <Paragraph.danger>{errors.description.message}</Paragraph.danger>}
+                {errors.description && <SmallText.danger>{errors.description.message}</SmallText.danger>}
             </View>
             <View style={styles.field}>
                 <Paragraph.regular>Data de conclusão</Paragraph.regular>
-                <TouchableOpacity style={{...styles.datePicker, borderWidth: errorDateMessage ? 1 : 0}} onPress={() => setShowDatePicker(true)}>
-                    <MaterialIcons name="calendar-today" size={theme.fontSize.large} />
-                    {date ? <Paragraph.regular>{date.toISOString()}</Paragraph.regular> : <Text style={styles.textMuted}>Selecione uma data</Text>}
-                </TouchableOpacity>
-                {errorDateMessage && <Paragraph.danger>{errorDateMessage}</Paragraph.danger>}
+                <DatePickerView date={date} errorDateMessage={errorDateMessage} onPress={() => setShowDatePicker(true)}/>
+                {errorDateMessage && <SmallText.danger>{errorDateMessage}</SmallText.danger>}
                 {showDatePicker && (
                     <DatePicker
                         value={date || new Date()}
@@ -135,10 +133,10 @@ export const AddTaskForm = ({handleCloseAddTaskBottomSheet}: IAddTaskForm) => {
                 )}
             </View>
             <Divider.default />
-            <TouchableOpacity style={styles.addButton} onPress={handleSubmit(handleAddTask)}>
+            <Button.default onPress={handleSubmit(handleAddTask)}>
                 <MaterialIcons name="add" size={20} />
                 <Paragraph.bold>Adicionar</Paragraph.bold>
-            </TouchableOpacity>
+            </Button.default>
         </View>
     )
 }
@@ -169,28 +167,9 @@ const styles = StyleSheet.create({
         textAlignVertical: 'top',
         borderColor: theme.colors.danger
     },
-    datePicker: {
-        backgroundColor: theme.colors.background,
-        borderRadius: theme.radius.normal,
-        padding: theme.distance.normal,
-        textAlignVertical: 'top',
-        flexDirection: 'row',
-        gap: theme.distance.normal,
-        alignItems: 'center',
-        borderColor: theme.colors.danger
-    },
     textMuted: {
         fontFamily: theme.fonts.oxanium400,
         fontSize: theme.fontSize.normal,
         color: theme.colors.muted,
-    },
-    addButton: {
-        flexDirection: 'row',
-        gap: theme.distance.normal,
-        backgroundColor: theme.colors.background,
-        borderRadius: theme.radius.rounded,
-        padding: theme.distance.normal,
-        justifyContent: 'center',
-        alignItems: 'center'
     }
 })

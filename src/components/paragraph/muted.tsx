@@ -7,7 +7,7 @@ export const Muted = (props: TextProps) => {
 
 const styles = StyleSheet.create({
     muted: {
-        fontSize: theme.fontSize.small,
+        fontSize: theme.fontSize.normal,
         fontFamily: theme.fonts.oxanium400,
         color: theme.colors.muted
     }

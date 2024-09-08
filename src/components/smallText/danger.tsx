@@ -7,7 +7,7 @@ export const Danger = (props: TextProps) => {
 
 const styles = StyleSheet.create({
     danger: {
-        fontSize: theme.fontSize.normal,
+        fontSize: theme.fontSize.small,
         fontFamily: theme.fonts.oxanium400,
         color: theme.colors.danger
     }

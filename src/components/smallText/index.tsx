@@ -1,14 +1,7 @@
-import { StyleSheet, Text, TextProps } from "react-native";
-import { theme } from "../../models/styles/styles";
+import { Danger } from "./danger";
+import { Muted } from "./muted";
 
-export const SmallText = (props: TextProps) => {
-    return <Text style={styles.smallText} {...props}/>
+export const SmallText = {
+    muted: Muted,
+    danger: Danger
 }
-
-const styles = StyleSheet.create({
-    smallText:{
-        fontFamily: theme.fonts.oxanium400,
-        fontSize: theme.fontSize.small,
-        color: theme.colors.muted
-    }
-})
