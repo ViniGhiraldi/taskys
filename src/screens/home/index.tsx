@@ -1,4 +1,4 @@
-import { Button, Pressable, PressableProps, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native"
+import { Button, Pressable, ScrollView, StyleSheet, View } from "react-native"
 import { theme } from "../../models/styles/styles"
 import { AddTaskButton } from "../../components/addTaskButton"
 import { Header } from "../../components/header"
@@ -11,7 +11,6 @@ import { TaskCard } from "../../components/taskCard"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import Animated, { runOnUI } from "react-native-reanimated"
 import { useAccordion } from "../../hooks/useAccordion"
-import { IconButton } from "../../components/iconButton"
 
 export const Home = () => {
     const { tasks, handleChangeTasks } = useTasksContext();
@@ -48,23 +47,18 @@ export const Home = () => {
                                     <Paragraph.bold>{tasks.pendings ? tasks.pendings.length : 0}</Paragraph.bold>
                                 </View>
                                 {tasks.pendings && (
-                                    <View style={styles.taskContainer}>
-                                        <IconButton>
-                                            <MaterialIcons name="hourglass-top" size={20}/>
-                                        </IconButton>
-                                        <Animated.View style={[animatedChevronStyle]}>
-                                            <Pressable onPress={() => runOnUI(setHeight)()}>
-                                                <MaterialIcons name="keyboard-arrow-down" size={20}/>
-                                            </Pressable>
-                                        </Animated.View>
-                                    </View>
+                                    <Animated.View style={[animatedChevronStyle]}>
+                                        <Pressable onPress={() => runOnUI(setHeight)()}>
+                                            <MaterialIcons name="keyboard-arrow-down" size={20}/>
+                                        </Pressable>
+                                    </Animated.View>
                                 )}
                             </View>
                             {tasks.pendings && (
                                 <Animated.View style={[animatedHeightStyle]}>
                                     <View style={styles.content} ref={animatedRef} collapsable={false}>
                                         {tasks.pendings.map((task, i) => (
-                                            <TaskCard title={task.title} description={task.description} conclusionDate={new Date(task.conclusionDate)} key={i} />
+                                            <TaskCard task={task} key={i} />
                                         ))}
                                     </View>
                                 </Animated.View>

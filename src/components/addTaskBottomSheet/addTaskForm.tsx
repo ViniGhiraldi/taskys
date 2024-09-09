@@ -45,7 +45,7 @@ export const AddTaskForm = ({handleCloseAddTaskBottomSheet}: IAddTaskForm) => {
         
         try {
             //instanciando constante com os valores da nova tarefa
-            const task = {...values, conclusionDate: date};
+            const task = {...values, conclusionDate: date, id: Math.random().toString()};
 
             //pegando as tarefas salvas no Async Storage
             const currentTasks = await AsyncStorage.getItem('tasks');

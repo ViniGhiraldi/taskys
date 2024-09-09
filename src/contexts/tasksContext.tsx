@@ -1,5 +1,4 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { ITask } from "../models/interfaces/ITask";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { IAllTasks } from "../models/interfaces/IAllTasks";
 

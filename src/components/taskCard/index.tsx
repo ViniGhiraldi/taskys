@@ -7,10 +7,15 @@ import { format } from "date-fns"
 import { Divider } from "../divider"
 import { SmallText } from "../smallText"
 import { useAccordion } from "../../hooks/useAccordion"
-import Animated, { runOnUI, useAnimatedStyle, withTiming } from "react-native-reanimated"
+import Animated, { runOnUI } from "react-native-reanimated"
 import { useState } from "react"
+import { IconButton } from "../iconButton"
 
-export const TaskCard = ({ conclusionDate, description, title }: ITask) => {
+interface ITaskCard{
+    task: ITask;
+}
+
+export const TaskCard = ({ task: { conclusionDate, description, title } }: ITaskCard) => {
     const { animatedHeightStyle, animatedRef, isOpened, setHeight, animatedChevronStyle } = useAccordion();
     
 
@@ -24,10 +29,7 @@ export const TaskCard = ({ conclusionDate, description, title }: ITask) => {
     return(
         <View style={styles.card}>
             <Pressable style={styles.header} onPress={handleOpenAccordion}>
-                <View style={styles.simpleBox}>
-                    <MaterialIcons name="drag-indicator" size={20} color={theme.colors.muted} />
-                    <Paragraph.regular numberOfLines={showMoreLines ? undefined : 1}>{title}</Paragraph.regular>
-                </View>
+                <Paragraph.regular numberOfLines={showMoreLines ? undefined : 1}>{title}</Paragraph.regular>
                 <View style={{...styles.simpleBox, flexShrink: 0}}>
                     <Paragraph.muted>{format(conclusionDate, 'dd/MM')}</Paragraph.muted>
                     <Animated.View style={[animatedChevronStyle]}>
@@ -39,6 +41,19 @@ export const TaskCard = ({ conclusionDate, description, title }: ITask) => {
                 <View style={styles.content} ref={animatedRef} collapsable={false}>
                     <Divider.default/>
                     <SmallText.muted>{description}</SmallText.muted>
+                    <View style={styles.buttonsContainer}>
+                        <View style={styles.simpleBox}>
+                            <IconButton>
+                                <MaterialIcons name="edit-note" size={20}/>
+                            </IconButton>
+                            <IconButton>
+                                <MaterialIcons name="close" size={20}/>
+                            </IconButton>
+                        </View>
+                        <IconButton>
+                            <MaterialIcons name="check" size={20}/>
+                        </IconButton>
+                    </View>
                 </View>
             </Animated.View>
         </View>
@@ -74,5 +89,11 @@ const styles = StyleSheet.create({
         maxWidth: '100%',
         flexShrink: 1,
         overflow: 'hidden'
+    },
+    buttonsContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        gap: theme.distance.normal,
+        alignItems: 'center'
     }
 })
