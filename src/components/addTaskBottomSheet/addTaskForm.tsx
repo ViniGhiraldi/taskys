@@ -64,14 +64,14 @@ export const AddTaskForm = ({handleCloseAddTaskBottomSheet}: IAddTaskForm) => {
                     const newTasks = {...currentTasksParsed, pendings: pendingTasksInOrder};
 
                     //atualizando as tarefas salvas no Async Storage e no estado local
-                    await AsyncStorage.setItem('tasks', JSON.stringify(newTasks));
-                    handleChangeTasks(newTasks);
+                    /* await AsyncStorage.setItem('tasks', JSON.stringify(newTasks)); */
+                    await handleChangeTasks(newTasks);
                 }else{
                 }
             }else{
                 //adicionando nova tarefa como primeira tarefa pendente no Async Storage e no estado local
-                await AsyncStorage.setItem('tasks', JSON.stringify({pendings: [task]}));
-                handleChangeTasks({pendings: [task]});
+                /* await AsyncStorage.setItem('tasks', JSON.stringify({pendings: [task]})); */
+                await handleChangeTasks({pendings: [task]});
             }
 
             //fechando bottom sheet

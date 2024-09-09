@@ -10,20 +10,30 @@ import { useAccordion } from "../../hooks/useAccordion"
 import Animated, { runOnUI } from "react-native-reanimated"
 import { useState } from "react"
 import { IconButton } from "../iconButton"
+import { useTasksContext } from "../../contexts/tasksContext"
 
 interface ITaskCard{
     task: ITask;
 }
 
-export const TaskCard = ({ task: { conclusionDate, description, title } }: ITaskCard) => {
+export const TaskCard = ({ task: { conclusionDate, description, title, id } }: ITaskCard) => {
     const { animatedHeightStyle, animatedRef, isOpened, setHeight, animatedChevronStyle } = useAccordion();
-    
+    const { tasks, handleChangeTasks } = useTasksContext();
 
     const [showMoreLines, setShowMoreLines] = useState(isOpened.value);
 
     const handleOpenAccordion = () => {
         setShowMoreLines(oldValue => !oldValue);
         runOnUI(setHeight)();
+    }
+
+    const handleDeleteTask = async (id: string) => {
+        try {
+            const newTasksList = tasks.pendings?.filter(task => task.id !== id);
+            await handleChangeTasks({...tasks, pendings: newTasksList});
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     return(
@@ -43,16 +53,16 @@ export const TaskCard = ({ task: { conclusionDate, description, title } }: ITask
                     <SmallText.muted>{description}</SmallText.muted>
                     <View style={styles.buttonsContainer}>
                         <View style={styles.simpleBox}>
-                            <IconButton>
+                            <IconButton.default>
                                 <MaterialIcons name="edit-note" size={20}/>
-                            </IconButton>
-                            <IconButton>
+                            </IconButton.default>
+                            <IconButton.default onPress={async () => await handleDeleteTask(id)}>
                                 <MaterialIcons name="close" size={20}/>
-                            </IconButton>
+                            </IconButton.default>
                         </View>
-                        <IconButton>
+                        <IconButton.success>
                             <MaterialIcons name="check" size={20}/>
-                        </IconButton>
+                        </IconButton.success>
                     </View>
                 </View>
             </Animated.View>

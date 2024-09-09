@@ -8,7 +8,6 @@ import { Paragraph } from "../../components/paragraph"
 import { MaterialIcons } from "@expo/vector-icons"
 import { useTasksContext } from "../../contexts/tasksContext"
 import { TaskCard } from "../../components/taskCard"
-import AsyncStorage from "@react-native-async-storage/async-storage"
 import Animated, { runOnUI } from "react-native-reanimated"
 import { useAccordion } from "../../hooks/useAccordion"
 
@@ -22,8 +21,7 @@ export const Home = () => {
 
     const handleRemoveAS = async () => {
         try {
-            await AsyncStorage.removeItem('tasks');
-            handleChangeTasks({});
+            await handleChangeTasks({});
         } catch (error) {
             console.log(error);
         }

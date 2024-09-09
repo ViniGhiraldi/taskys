@@ -4,7 +4,7 @@ import { IAllTasks } from "../models/interfaces/IAllTasks";
 
 interface ITasksContext{
     tasks: IAllTasks;
-    handleChangeTasks: (tasks: IAllTasks) => void;
+    handleChangeTasks: (tasks: IAllTasks) => Promise<void>;
 }
 
 const TasksContext = createContext({} as ITasksContext)
@@ -27,8 +27,13 @@ export const TasksProvider = ({ children }: ITasksProvider) => {
         })
     }, [])
 
-    const handleChangeTasks = (newTasks: IAllTasks) => {
-        setTasks(newTasks);
+    const handleChangeTasks = async (newTasks: IAllTasks) => {
+        try {
+            await AsyncStorage.setItem('tasks', JSON.stringify(newTasks));
+            setTasks(newTasks);
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     return (

@@ -1,14 +1,7 @@
-import { StyleSheet, TouchableOpacity, TouchableOpacityProps } from "react-native"
-import { theme } from "../../models/styles/styles"
+import { Default } from "./default";
+import { Success } from "./success";
 
-export const IconButton = (props: TouchableOpacityProps) => {
-    return <TouchableOpacity style={styles.iconButton} {...props}/>
+export const IconButton = {
+    default: Default,
+    success: Success
 }
-
-const styles = StyleSheet.create({
-    iconButton:{
-        padding: theme.distance["x-small"],
-        borderRadius: theme.radius.normal,
-        backgroundColor: theme.colors.button
-    }
-})
